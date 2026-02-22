@@ -1,12 +1,15 @@
 /*
  * Copyright 2022 Arman Bilge
  *
+
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
+
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
+
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,6 +29,15 @@ object io extends Html[IO]
 
 object Html:
   def apply[F[_]: Async]: Html[F] = new Html[F]
+
+  /** Automatically derives an [[Html]] capability for any effect type with an [[Async]]
+    * instance.
+    *
+    * This allows parametric components to request the HTML DSL via a context bound:
+    * {{{[F[_]: Async: Html]}}} or a using clause: {{{(using Html[F])}}} rather than
+    * threading an explicit `Html[F]` instance through every call.
+    */
+  given [F[_]: Async]: Html[F] = new Html[F]
 
 sealed class Html[F[_]](using F: Async[F])
     extends HtmlTags[F],
